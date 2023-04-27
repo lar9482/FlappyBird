@@ -39,6 +39,7 @@ class bird:
             self.image.get_height()
         )
 
+        #Updating the vertical velocity to emulate the effects of gravity
         self.y_velocity += self.gravity_constant * self.delta_time
 
     #For a jump, the vertically velocity is set back to the original velocity constant

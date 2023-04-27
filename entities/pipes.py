@@ -4,23 +4,27 @@ import random
 class pipes:
     def __init__(self, screen_size, bird_width, bird_height):
         
-        #The x position of the pipes
-        self.x = screen_size[0]-50
+        #The horizational position of the pipes
+        self.x = screen_size[0]
 
         #How wide the pipes are relative to the width of the bird.
-        width_constant = 1.5
+        self.width_constant = 1.5
 
         #How far apart the pipes are relative to the height of the bird
-        height_constant = 3
+        self.height_constant = 3
 
-        #Define the "top" and "bottom of the gap between the pipes"
+        #Keep track of the bird's width and height for use later
+        self.bird_width = bird_width
+        self.bird_height = bird_height
+
+        #Define the "top" and "bottom" of the gap between the pipes
         #The gap 'size' is height_constant*bird_height
-        gap_begin = random.uniform(0, screen_size[1]-height_constant*bird_height)
-        gap_end = gap_begin + height_constant*bird_height
+        gap_begin = random.uniform(0, screen_size[1]-self.height_constant*self.bird_height)
+        gap_end = gap_begin + self.height_constant*self.bird_height
 
         #Defining the rectangles for the top and bottom pipes.
-        self.top_pipe = pg.Rect(self.x, 0, width_constant*bird_width, gap_begin)
-        self.bottom_pipe = pg.Rect(self.x, gap_end, width_constant*bird_width, screen_size[1]-gap_end)
+        self.top_pipe = pg.Rect(self.x, 0, self.width_constant*self.bird_width, gap_begin)
+        self.bottom_pipe = pg.Rect(self.x, gap_end, self.width_constant*self.bird_width, screen_size[1]-gap_end)
 
     #Draw the top and bottom pipes
     def draw(self, screen):
@@ -43,4 +47,3 @@ class pipes:
             self.bottom_pipe.width,
             self.bottom_pipe.height
         )
-
