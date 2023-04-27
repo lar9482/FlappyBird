@@ -52,7 +52,9 @@ class game:
                 collided = True
 
         return collided
-        
+    
+    def __hit_bottom(self, bird):
+        return bird.hitbox.y >= self.screen_size[1]
 
     def __init(self):
         pygame.init()
@@ -80,7 +82,9 @@ class game:
             if (self.pipes[0].x == self.bird.x):
                 self.pipes.append(pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width))
 
-            self.__has_collided(self.bird, self.pipes[0])
+            #Check if the bird has died
+            if (self.__has_collided(self.bird, self.pipes[0]) or self.__hit_bottom(self.bird)):
+                print('die')
 
             # fills screen with a background color
             self.screen.fill(self.WHITE)
