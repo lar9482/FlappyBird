@@ -37,12 +37,15 @@ def main():
 
         #Drawing the bird
         flappy.draw(screen)
-
+        
         #Updating the position of the bird
         flappy.update_position()
 
-        pygame.draw.rect(screen, color='green', rect=Pipes.top_pipe)
-        pygame.draw.rect(screen, color='green', rect=Pipes.bottom_pipe)
+        #Drawing the pipes
+        Pipes.draw(screen)
+
+        Pipes.update_position()
+
         # update display based on what's drawn on the screen
         pygame.display.flip()
         
