@@ -14,7 +14,7 @@ class bird:
         self.initial_y_velocity = -35
         self.delta_time = 0.20
         self.gravity_constant = 9.81
-
+        
         #Velocity of the bird(speed of the bird moving vertically)
         self.y_velocity = self.initial_y_velocity
 
@@ -22,15 +22,9 @@ class bird:
         self.x = 0.25 * screen_size[0]
         self.y = 0.25 * screen_size[1]
 
-        #Hitbox of the bird, just a rectangle for simplicity
-        self.hitbox = pg.Rect((
-            self.x,
-            self.y,
-            self.image.get_width(),
-            self.image.get_height()
-        ))
+        #Hitbox of the bird, just the image's rectangle
+        self.hitbox = self.image.get_rect()
         
-
     #Calculating y= -(1/2)g^2*delta_time + v_y*delta_time + y
     def update_position(self):
         
@@ -50,3 +44,7 @@ class bird:
     #For a jump, the vertically velocity is set back to the original velocity constant
     def jump(self):
         self.y_velocity = self.initial_y_velocity
+
+    #Given the screen of the game itself, draw the bird's image at (x, y)
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))

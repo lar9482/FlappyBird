@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from entities.bird import bird
+from entities.pipes import pipes
 # define some colors in the RGB format
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -18,6 +19,9 @@ def main():
     #Flappy bird prototype
     flappy = bird(screen_size)
 
+    #Pipes prototype
+    Pipes = pipes(screen_size, flappy.hitbox.height, flappy.hitbox.width)
+
     while True:
         # handle mouse and keyboard event
         for event in pygame.event.get():
@@ -28,16 +32,17 @@ def main():
             if event.type == 771:
                 flappy.jump()
 
-
         # fills screen with a background color
         screen.fill(WHITE)
 
         #Drawing the bird
-        screen.blit(flappy.image, (flappy.x, flappy.y))
+        flappy.draw(screen)
 
         #Updating the position of the bird
         flappy.update_position()
 
+        pygame.draw.rect(screen, color='green', rect=Pipes.top_pipe)
+        pygame.draw.rect(screen, color='green', rect=Pipes.bottom_pipe)
         # update display based on what's drawn on the screen
         pygame.display.flip()
         
