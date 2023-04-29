@@ -2,5 +2,9 @@ from ai.genome import genome
 from ai.node import node, Type
 from ai.connection import connection
 
-first_chromosome = genome(3, 1)
-print('NEAT tests')
+from ai.NEAT_Pool import NEAT_Pool
+
+pool = NEAT_Pool(3, 1, 2)
+test = pool.population[0]
+
+print()

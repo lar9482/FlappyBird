@@ -32,6 +32,6 @@ class node:
         else:
             return (math.exp(value)) / (1 + math.exp(value))
         
-    #Less than 'operator'
+    #Less than 'operator' for comparison of 'nodes'
     def __lt__(self, other):
         return self.id <= other.id

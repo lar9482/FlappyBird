@@ -11,3 +11,7 @@ class connection:
 
     def feed_forward(self):
         pass
+    
+    #Less than 'operator'
+    def __lt__(self, other):
+        return self.innovation_number <= other.innovation_number
