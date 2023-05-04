@@ -65,9 +65,9 @@ class genome:
         curr_ids = list(range(0, self.num_inputs))
 
         #Getting the target ids, which are the output node ids.
-        final_ids = list(range(self.num_inputs, self.num_inputs+self.num_outputs))
+        output_ids = list(range(self.num_inputs, self.num_inputs+self.num_outputs))
 
-        while (curr_ids != final_ids):
+        while (len(curr_ids) != 0):
 
             #Dequeue a node id, then activating the node associated with the id.
             curr_id = curr_ids.pop(0)
@@ -85,7 +85,7 @@ class genome:
                     )
 
                     #Add the output id to the queue if not already present
-                    if (not conn.out_node_id in curr_ids):
+                    if (not conn.out_node_id in output_ids):
                         curr_ids.append(conn.out_node_id)
 
     def __get_output(self):
@@ -117,8 +117,3 @@ class genome:
         
         #Getting the activated data from the output nodes
         return self.__get_output()
-
-        
-
-    
-        
