@@ -12,6 +12,7 @@ class node:
         self.value = 0
         self.activated_value = 0
 
+        #Node id to identify nodes in the future
         self.id = id
 
     def feed(self, weight, value):
