@@ -48,6 +48,7 @@ class genome:
         NEAT_Pool.curr_innovation_num += 1
 
     def __reset_nodes(self):
+        #Set all value/activated_values from all of the nodes to 0
         for node in self.node_genes:
             node.reset_node()
 
@@ -55,7 +56,7 @@ class genome:
         #Getting the initial input node ids
         input_ids = list(range(0, self.num_inputs))
 
-        #For every input id, set the associated node's value to the input passed.
+        #For every input id, set the associated node's value to the input passed in.
         for input_id in input_ids:
             self.node_genes[input_id].value = input[input_id]
 
@@ -77,14 +78,14 @@ class genome:
             for conn in self.connection_genes:
 
                 #Given a connection that has the input id as the current id
-                if (conn.in_node_id == curr_id):
+                if (conn.in_node_id == curr_id and conn.enabled):
                     
                     #Take the weight and current id, and data into the node associated with the output id
                     self.node_genes[conn.out_node_id].feed(
                         conn.weight, self.node_genes[curr_id].activated_value
                     )
 
-                    #Add the output id to the queue if not already present
+                    #Given the out_node_id isn't an output id, add it to the queue
                     if (not conn.out_node_id in output_ids):
                         curr_ids.append(conn.out_node_id)
 
