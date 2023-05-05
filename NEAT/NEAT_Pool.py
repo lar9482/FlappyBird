@@ -1,5 +1,7 @@
 from NEAT.genome import genome
+
 import numpy as np
+import random
 
 class NEAT_Pool:
 
@@ -32,7 +34,7 @@ class NEAT_Pool:
             )
 
     def fitness_function(self, genome):
-        return self.population.index(genome)
+        return 10*self.population.index(genome)+1
     
     def predict(self, X):
         if (X.shape != (self.population_size, self.num_inputs)):
@@ -47,4 +49,40 @@ class NEAT_Pool:
         return Y
     
     def reproduce(self):
+        #Get the fitness values associated with each genome.
+        #For easy access, pair fitness values and genomes together(key is fitness, value is genome)
+        fitness_genome_pairing = {self.fitness_function(genome): genome for genome in self.population}
+
+        #Sort the pairings based on fitness value
+        fitness_genome_pairing = dict(sorted(fitness_genome_pairing.items()))
+
+        raw_fitnesses = list(fitness_genome_pairing.keys())
+
+        #Getting total rank, which is the integer sum formula
+        total_fitnesses = sum(raw_fitnesses)
+        
+        #Adjusting fitness values to fitness/total_fitness for the selection process
+        fitness_genome_pairing = {
+            (raw_fitness / (total_fitnesses)): fitness_genome_pairing[raw_fitness] 
+            for raw_fitness in raw_fitnesses
+        }
+
+        new_population_pool = []
+
+        for i in range(0, self.population_size):
+            parent1 = self.select(fitness_genome_pairing)
+            parent2 = self.select(fitness_genome_pairing)
+            pass
+    
+    def select(self, fitness_genome_pairing):
+        fitness_values = list(fitness_genome_pairing.keys())
+        min_fitness = min(fitness_values)
+        max_fitness = max(fitness_values)
+
+        chance_threshold = random.uniform(min_fitness, max_fitness)
+        for fitness in fitness_values:
+            if fitness <= chance_threshold:
+                return fitness_genome_pairing[fitness]
+
+    def crossover(self, genome1, genome2):
         pass
