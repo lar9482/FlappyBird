@@ -1,8 +1,8 @@
-from ai.genome import genome
-from ai.node import node, Type
-from ai.connection import connection
+from NEAT.genome import genome
+from NEAT.components.node import node, Type
+from NEAT.components.connection import connection
 
-from ai.NEAT_Pool import NEAT_Pool
+from NEAT.NEAT_Pool import NEAT_Pool
 
 import numpy as np
 
@@ -17,7 +17,8 @@ x = np.array([[1, 2, 3],
 pool = NEAT_Pool(
     num_input_nodes, 
     num_output_nodes, 
-    population_size
+    population_size,
+    genome
 )
 
 y = pool.predict(x)

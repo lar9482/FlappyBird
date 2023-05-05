@@ -1,6 +1,6 @@
 from sortedcontainers import SortedList
-from ai.node import node, Type
-from ai.connection import connection
+from NEAT.components.node import node, Type
+from NEAT.components.connection import connection
 import random
 
 import numpy as np

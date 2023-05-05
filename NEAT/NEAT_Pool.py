@@ -1,4 +1,4 @@
-from ai.genome import genome
+from NEAT.genome import genome
 import numpy as np
 
 class NEAT_Pool:
@@ -8,7 +8,8 @@ class NEAT_Pool:
 
     def __init__(self, num_inputs, 
                        num_outputs,
-                       population_size):
+                       population_size,
+                       genone_type = genome):
 
         #The population pool itself of genome objects
         self.population = []
@@ -23,13 +24,16 @@ class NEAT_Pool:
 
         #Initialize the population pool
         for i in range(0, population_size):
-            new_genome = genome(num_inputs, num_outputs)
+            new_genome = genone_type(num_inputs, num_outputs)
             new_genome.init_connection_genes(self)
 
             self.population.append(
                 new_genome
             )
 
+    def fitness_function(self, genome):
+        return self.population.index(genome)
+    
     def predict(self, X):
         if (X.shape != (self.population_size, self.num_inputs)):
             raise Exception('NEAT_Pool.predict: Make sure shape of X is (pop_size, num_inputs)')
@@ -38,9 +42,9 @@ class NEAT_Pool:
 
         #Getting output for all of the genomes
         for i in range(0, self.population_size):
-            curr_X = X[i, :]
-            
-            Y[i, :] = self.population[i].predict(curr_X)
+            Y[i, :] = self.population[i].predict(X[i, :])
         
         return Y
-
+    
+    def reproduce(self):
+        pass
