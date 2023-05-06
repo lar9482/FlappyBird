@@ -8,7 +8,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/test_NEAT_feedforward.py",
+            "program": "${workspaceFolder}/test_NEAT_crossover.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

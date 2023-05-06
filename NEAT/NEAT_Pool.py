@@ -1,5 +1,6 @@
 from NEAT.genome import genome
-
+from NEAT.components.node import node, Type
+from sortedcontainers import SortedList
 import numpy as np
 import random
 
@@ -90,9 +91,44 @@ class NEAT_Pool:
 
     def crossover(self, genome1, genome2, fitness1, fitness2):
 
+        #Getting disjointed and matching connection genes based on the innovation numbers
         (disjoint_genes_1, disjoint_genes_2, joined_genes) = self.__find_disjoint_match_genes(genome1, genome2)
+        new_genome = genome(self.num_inputs, self.num_outputs)
 
+        #Inheriting matching genes
+        for joined_gene in joined_genes:
+            new_genome.connection_genes.add(random.choice(joined_gene))
+
+        #Inherit disjoint genes based on fitness
+        if (fitness2 <= fitness1):
+            for disjointed_gene in disjoint_genes_1:
+                new_genome.connection_genes.add(disjointed_gene)
+        if (fitness1 <= fitness2):
+            for disjointed_gene in disjoint_genes_2:
+                new_genome.connection_genes.add(disjointed_gene)
         
+        curr_node_ids = [gene.id for gene in new_genome.node_genes]
+
+        #Inherit node genes and randomly enable connection genes 25% of the time
+        
+        #Basically, given every in_node_id and out_node_id in the connection genes,
+        #if they don't yet exist in the new genome, create a new node gene for them
+        for connection_gene in new_genome.connection_genes:
+            if (not connection_gene.in_node_id in curr_node_ids):
+                new_genome.node_genes.add(node(Type.Hidden, connection_gene.in_node_id))
+                curr_node_ids.append(connection_gene.in_node_id)
+            if (not connection_gene.out_node_id in curr_node_ids):
+                new_genome.node_genes.add(node(Type.Hidden, connection_gene.out_node_id))
+                curr_node_ids.append(connection_gene.out_node_id)
+
+            if (not connection_gene.enabled and random.uniform(0, 1) < 0.25):
+                connection_gene.enabled = True
+        
+        #Adjust the current node id based all of the recently inherited node genes
+        new_genome.curr_node_id = max(curr_node_ids)+1
+
+        return new_genome
+
     def __find_disjoint_match_genes(self, genome1, genome2):
         disjoint_genes_1 = []
         disjoint_genes_2 = []

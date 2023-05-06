@@ -62,7 +62,8 @@ class genome:
 
     def __feed_forward(self):
 
-        #Initialize the current ids tracked to the input ids/
+        #Initialize the current ids tracked to the input ids
+        #Treat as a queue to process node ids one by one
         curr_ids = list(range(0, self.num_inputs))
 
         #Getting the target ids, which are the output node ids.
