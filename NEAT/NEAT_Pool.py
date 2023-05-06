@@ -5,9 +5,6 @@ import random
 
 class NEAT_Pool:
 
-    #Global innovation number counter
-    curr_innovation_num = 0
-
     def __init__(self, num_inputs, 
                        num_outputs,
                        population_size,
@@ -22,7 +19,11 @@ class NEAT_Pool:
         self.num_inputs = num_inputs
         self.num_outputs = num_outputs
 
+        #Current generation
         self.generation = 0
+
+        #Global innovation number counter
+        self.curr_innovation_num = 0
 
         #Initialize the population pool
         for i in range(0, population_size):
@@ -70,8 +71,11 @@ class NEAT_Pool:
         new_population_pool = []
 
         for i in range(0, self.population_size):
-            parent1 = self.select(fitness_genome_pairing)
-            parent2 = self.select(fitness_genome_pairing)
+            
+            (parent1, fitness1) = self.select(fitness_genome_pairing)
+            (parent2, fitness2) = self.select(fitness_genome_pairing)
+
+            child = self.crossover(parent1, parent2, fitness1, fitness2)
             pass
     
     def select(self, fitness_genome_pairing):
@@ -81,8 +85,13 @@ class NEAT_Pool:
 
         chance_threshold = random.uniform(min_fitness, max_fitness)
         for fitness in fitness_values:
-            if fitness <= chance_threshold:
-                return fitness_genome_pairing[fitness]
+            if fitness >= chance_threshold:
+                return (fitness_genome_pairing[fitness], fitness)
 
-    def crossover(self, genome1, genome2):
-        pass
+    def crossover(self, genome1, genome2, fitness1, fitness2):
+        for conn_gene in genome1.connection_genes:
+            print(conn_gene.innovation_number)
+        print()
+        for conn_gene in genome2.connection_genes:
+            print(conn_gene.innovation_number)
+        print()

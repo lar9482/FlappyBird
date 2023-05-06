@@ -3,7 +3,7 @@ import math
 
 class Type(Enum):
     Input = 0
-    Hiden = 1
+    Hidden = 1
     Output = 2
 
 class node:
