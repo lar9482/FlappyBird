@@ -12,3 +12,4 @@ class connection:
     #Less than 'operator'
     def __lt__(self, other):
         return self.innovation_number <= other.innovation_number
+    

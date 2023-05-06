@@ -89,9 +89,37 @@ class NEAT_Pool:
                 return (fitness_genome_pairing[fitness], fitness)
 
     def crossover(self, genome1, genome2, fitness1, fitness2):
-        for conn_gene in genome1.connection_genes:
-            print(conn_gene.innovation_number)
-        print()
-        for conn_gene in genome2.connection_genes:
-            print(conn_gene.innovation_number)
-        print()
+
+        (disjoint_genes_1, disjoint_genes_2, joined_genes) = self.__find_disjoint_match_genes(genome1, genome2)
+
+        
+    def __find_disjoint_match_genes(self, genome1, genome2):
+        disjoint_genes_1 = []
+        disjoint_genes_2 = []
+        joined_genes = []
+
+        i = j = 0
+        
+        while ((i < len(genome1.connection_genes)) and (j < len(genome2.connection_genes))) :
+            if (genome1.connection_genes[i].innovation_number < genome2.connection_genes[j].innovation_number):
+                disjoint_genes_1.append(genome1.connection_genes[i])
+                i += 1
+
+            elif (genome2.connection_genes[j].innovation_number < genome1.connection_genes[i].innovation_number):
+                disjoint_genes_2.append(genome2.connection_genes[j])
+                j += 1
+            
+            elif (genome1.connection_genes[i].innovation_number == genome2.connection_genes[j].innovation_number):
+                joined_genes.append((genome1.connection_genes[i], genome2.connection_genes[j]))
+                i += 1
+                j += 1
+
+        while (i < len(genome1.connection_genes)):
+            disjoint_genes_1.append(genome1.connection_genes[i])
+            i += 1
+
+        while (j < len(genome2.connection_genes)):
+            disjoint_genes_2.append(genome2.connection_genes[j])
+            j += 1
+
+        return (disjoint_genes_1, disjoint_genes_2, joined_genes)

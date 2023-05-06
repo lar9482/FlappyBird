@@ -6,7 +6,6 @@ from NEAT.NEAT_Pool import NEAT_Pool
 
 import numpy as np
 
-#Emulating the genomes in Stanley's crossover example
 def get_stanley_genomes():
     num_inputs = 3
     num_outputs = 1
@@ -108,12 +107,17 @@ def get_stanley_genomes():
 
     return (first_genome, second_genome)
 
-
-def first_test():
-
+def test_feedforward():
     (first_genome, second_genome) = get_stanley_genomes()
     pool = NEAT_Pool(3, 1, 2, genome)
-    pool.crossover(first_genome, second_genome, 1, 1)
+    pool.population = [first_genome, second_genome]
 
+    x = np.array([[1, 2, 3], 
+              [5, 6, 7]], np.int32)
+    
+    y = pool.predict(x)
 
-first_test()
+    print(x)
+    print(y)
+
+test_feedforward()
