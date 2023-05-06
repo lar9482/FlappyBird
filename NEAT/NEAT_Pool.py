@@ -88,6 +88,8 @@ class NEAT_Pool:
         new_population_pool = []
         new_population_pool = new_population_pool + self.get_elite_genomes(fitness_genome_pairing)
 
+        #For the remaining space in the new population size, select two parents,
+        #breed them and apply mutations
         for i in range(self.num_elites, self.population_size):
             (parent1, fitness1) = self.select(fitness_genome_pairing)
             (parent2, fitness2) = self.select(fitness_genome_pairing)
@@ -155,6 +157,8 @@ class NEAT_Pool:
 
         return new_genome
 
+    #Utilizing a 'merge' operation to the disjoint and matching genes, as the connection genes are sorted based
+    # on the innovation number
     def __find_disjoint_match_genes(self, genome1, genome2):
         disjoint_genes_1 = []
         disjoint_genes_2 = []
@@ -252,6 +256,8 @@ class NEAT_Pool:
         if (chance_threshold < self.adjust_weight_rate):
             #Get a random connection gene
             connection_gene = random.choice(mutated_genome.connection_genes)
+            
+            #Adjust the weight to a random number
             connection_gene.weight = random.uniform(0, 1)
 
         return mutated_genome
