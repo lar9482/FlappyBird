@@ -113,7 +113,13 @@ def first_test():
 
     (first_genome, second_genome) = get_stanley_genomes()
     pool = NEAT_Pool(3, 1, 2, genome)
-    pool.crossover(first_genome, second_genome, 1, 1)
 
+    child_genome = pool.crossover(first_genome, second_genome, 1, 1)
+
+    X = np.array([1, 2, 3], np.int32)
+    Y = child_genome.predict(X)
+
+    print(X)
+    print(Y)
 
 first_test()
