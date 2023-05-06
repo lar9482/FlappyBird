@@ -8,7 +8,7 @@ import numpy as np
 
 num_input_nodes = 3
 num_output_nodes = 1
-population_size = 10
+population_size = 2
 
 # (population_size, num_inputs)
 x = np.array([[1, 2, 3], 
@@ -21,4 +21,7 @@ pool = NEAT_Pool(
     genome
 )
 
+print(pool.predict(x))
+print('###')
 pool.reproduce()
+print(pool.predict(x))

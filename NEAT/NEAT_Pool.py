@@ -11,14 +11,14 @@ class NEAT_Pool:
     def __init__(self, num_inputs, 
                        num_outputs,
                        population_size,
-                       genone_type = genome,
+                       genome_type = genome,
                        add_node_rate = 0.2,
                        add_connection_rate = 0.5,
-                       adjust_weight_rate = 0.2):
+                       adjust_weight_rate = 0.2,
+                       num_elites = 2):
 
         #The population pool itself of genome objects
         self.population = []
-
         self.population_size = population_size
 
         #Number of input and output nodes in this pool
@@ -28,12 +28,15 @@ class NEAT_Pool:
         #Current generation
         self.generation = 0
 
+        #Number of elite genomes to carry out from every generation
+        self.num_elites = num_elites
+
         #Global innovation number counter
         self.curr_innovation_num = 0
 
         #Initialize the population pool
         for i in range(0, population_size):
-            new_genome = genone_type(num_inputs, num_outputs)
+            new_genome = genome_type(num_inputs, num_outputs)
             new_genome.init_connection_genes(self)
 
             self.population.append(
@@ -50,7 +53,9 @@ class NEAT_Pool:
     
     def predict(self, X):
         if (X.shape != (self.population_size, self.num_inputs)):
-            raise Exception('NEAT_Pool.predict: Make sure shape of X is (pop_size, num_inputs)')
+            raise Exception('NEAT_Pool.predict: Make sure shape of X is ({0}, {1})'.format(
+                str(self.population_size), str(self.num_inputs)
+            ))
         
         Y = np.empty((self.population_size, self.num_outputs))
 
@@ -61,34 +66,44 @@ class NEAT_Pool:
         return Y
     
     def reproduce(self):
-        #Get the fitness values associated with each genome.
+        #Get the raw fitness values associated with each genome.
         #For easy access, pair fitness values and genomes together(key is fitness, value is genome)
         fitness_genome_pairing = {self.fitness_function(genome): genome for genome in self.population}
 
         #Sort the pairings based on fitness value
         fitness_genome_pairing = dict(sorted(fitness_genome_pairing.items()))
 
+        #Getting all raw fitness values
         raw_fitnesses = list(fitness_genome_pairing.keys())
 
-        #Getting total rank, which is the integer sum formula
+        #Getting sum of all the of raw fitness values
         total_fitnesses = sum(raw_fitnesses)
         
-        #Adjusting fitness values to fitness/total_fitness for the selection process
+        #Adjusting fitness values to fitness/total_fitness for the selection operator
         fitness_genome_pairing = {
             (raw_fitness / (total_fitnesses)): fitness_genome_pairing[raw_fitness] 
             for raw_fitness in raw_fitnesses
         }
 
+        #Initialize a new population pool, then get the elite individuals from last generation
         new_population_pool = []
+        new_population_pool = new_population_pool + self.get_elite_genomes(fitness_genome_pairing)
 
-        for i in range(0, self.population_size):
-            
+        for i in range(self.num_elites, self.population_size):
             (parent1, fitness1) = self.select(fitness_genome_pairing)
             (parent2, fitness2) = self.select(fitness_genome_pairing)
 
             child = self.crossover(parent1, parent2, fitness1, fitness2)
-            pass
-    
+            child = self.mutation(child)
+            
+            new_population_pool.append(child)
+        
+        self.population = new_population_pool
+
+    def get_elite_genomes(self, fitness_genome_pairing):
+        genomes = list(fitness_genome_pairing.values())
+        return [genomes[i] for i in reversed(range(self.population_size-self.num_elites, self.population_size))]
+            
     def select(self, fitness_genome_pairing):
         fitness_values = list(fitness_genome_pairing.keys())
         min_fitness = min(fitness_values)
@@ -109,7 +124,7 @@ class NEAT_Pool:
         for joined_gene in joined_genes:
             new_genome.connection_genes.add(random.choice(joined_gene))
 
-        #Inherit disjoint genes based on fitness
+        #Inheriting disjoint genes based on fitness
         if (fitness2 <= fitness1):
             for disjointed_gene in disjoint_genes_1:
                 new_genome.connection_genes.add(disjointed_gene)
@@ -121,12 +136,13 @@ class NEAT_Pool:
 
         #Inherit node genes and randomly enable connection genes 25% of the time
         
-        #Basically, given every in_node_id and out_node_id in the connection genes,
+        #Basically, given every in_node_id/out_node_id pairing in the connection genes,
         #if they don't yet exist in the new genome, create a new node gene for them
         for connection_gene in new_genome.connection_genes:
             if (not connection_gene.in_node_id in curr_node_ids):
                 new_genome.node_genes.add(node(Type.Hidden, connection_gene.in_node_id))
                 curr_node_ids.append(connection_gene.in_node_id)
+
             if (not connection_gene.out_node_id in curr_node_ids):
                 new_genome.node_genes.add(node(Type.Hidden, connection_gene.out_node_id))
                 curr_node_ids.append(connection_gene.out_node_id)
@@ -224,7 +240,7 @@ class NEAT_Pool:
                 selected_output_id = random.choice(all_ids)
             
             #Add the connection gene to the genome, then increment the innovation number counter
-            new_connection_gene = connection_gene(
+            new_connection_gene = connection(
                 selected_in_id,
                 random.uniform(0, 1),
                 selected_output_id,
@@ -240,4 +256,3 @@ class NEAT_Pool:
             connection_gene.weight = random.uniform(0, 1)
 
         return mutated_genome
-        
