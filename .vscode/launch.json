@@ -8,9 +8,10 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/test_NEAT.py",
+            "program": "${workspaceFolder}/tests/test_NEAT.py",
             "console": "integratedTerminal",
-            "justMyCode": true
+            "justMyCode": true,
+            "env": {"PYTHONPATH": "${workspaceFolder}"}
         }
     ]
 }

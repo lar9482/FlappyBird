@@ -33,6 +33,9 @@ class NEAT_Pool:
         #Global innovation number counter
         self.curr_innovation_num = 0
 
+        #Type of genome for this pool
+        self.genome_type = genome_type
+
         #Initialize the population pool
         for i in range(0, population_size):
             new_genome = genome_type(num_inputs, num_outputs)
@@ -119,7 +122,7 @@ class NEAT_Pool:
 
         #Getting disjointed and matching connection genes based on the innovation numbers
         (disjoint_genes_1, disjoint_genes_2, joined_genes) = self.__find_disjoint_match_genes(genome1, genome2)
-        new_genome = genome(self.num_inputs, self.num_outputs)
+        new_genome = self.genome_type(self.num_inputs, self.num_outputs)
 
         #Inheriting matching genes
         for joined_gene in joined_genes:
@@ -256,7 +259,7 @@ class NEAT_Pool:
         if (chance_threshold < self.adjust_weight_rate):
             #Get a random connection gene
             connection_gene = random.choice(mutated_genome.connection_genes)
-            
+
             #Adjust the weight to a random number
             connection_gene.weight = random.uniform(0, 1)
 
