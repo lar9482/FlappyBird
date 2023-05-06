@@ -7,7 +7,6 @@ import random
 import copy
 
 class NEAT_Pool:
-
     def __init__(self, num_inputs, 
                        num_outputs,
                        population_size,
