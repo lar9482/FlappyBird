@@ -54,7 +54,7 @@ class genome:
 
     def __feed_in(self, input):
         #Getting the initial input node ids
-        input_ids = list(range(0, self.num_inputs))
+        input_ids = [curr_node.id for curr_node in self.node_genes if curr_node.type == Type.Input]
 
         #For every input id, set the associated node's value to the input passed in.
         for input_id in input_ids:
@@ -64,10 +64,10 @@ class genome:
 
         #Initialize the current ids tracked to the input ids
         #Treat as a queue to process node ids one by one
-        curr_ids = list(range(0, self.num_inputs))
+        curr_ids = [curr_node.id for curr_node in self.node_genes if curr_node.type == Type.Input]
 
         #Getting the target ids, which are the output node ids.
-        output_ids = list(range(self.num_inputs, self.num_inputs+self.num_outputs))
+        output_ids = [curr_node.id for curr_node in self.node_genes if curr_node.type == Type.Output]
 
         while (len(curr_ids) != 0):
 
@@ -92,7 +92,7 @@ class genome:
 
     def __get_output(self):
         #Getting the output ids
-        output_ids = list(range(self.num_inputs, self.num_inputs+self.num_outputs))
+        output_ids = output_ids = [curr_node.id for curr_node in self.node_genes if curr_node.type == Type.Output]
 
         output = np.empty(self.num_outputs, np.float32)
 

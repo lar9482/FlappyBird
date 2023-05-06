@@ -1,15 +1,20 @@
 from NEAT.genome import genome
 from NEAT.components.node import node, Type
-from sortedcontainers import SortedList
+from NEAT.components.connection import connection
+
 import numpy as np
 import random
+import copy
 
 class NEAT_Pool:
 
     def __init__(self, num_inputs, 
                        num_outputs,
                        population_size,
-                       genone_type = genome):
+                       genone_type = genome,
+                       add_node_rate = 0.2,
+                       add_connection_rate = 0.5,
+                       adjust_weight_rate = 0.2):
 
         #The population pool itself of genome objects
         self.population = []
@@ -34,6 +39,11 @@ class NEAT_Pool:
             self.population.append(
                 new_genome
             )
+
+        #Rates related to the mutation operator
+        self.add_node_rate = add_node_rate
+        self.add_connection_rate = add_connection_rate
+        self.adjust_weight_rate = adjust_weight_rate
 
     def fitness_function(self, genome):
         return 10*self.population.index(genome)+1
@@ -121,6 +131,7 @@ class NEAT_Pool:
                 new_genome.node_genes.add(node(Type.Hidden, connection_gene.out_node_id))
                 curr_node_ids.append(connection_gene.out_node_id)
 
+            #25% of the time, re-enable a connection gene
             if (not connection_gene.enabled and random.uniform(0, 1) < 0.25):
                 connection_gene.enabled = True
         
@@ -159,3 +170,74 @@ class NEAT_Pool:
             j += 1
 
         return (disjoint_genes_1, disjoint_genes_2, joined_genes)
+    
+    def mutation(self, genome):
+        mutated_genome = copy.deepcopy(genome)
+        chance_threshold = random.uniform(0, 1)
+
+        if (chance_threshold < self.add_node_rate):
+            #Get a random connection gene
+            connection_gene = random.choice(mutated_genome.connection_genes)
+
+            #Add node gene to the genome
+            new_node = node(Type.Hidden, mutated_genome.curr_node_id)
+            mutated_genome.node_genes.add(new_node)
+
+            #Adding connection genes inbetween the new node and the in/out ids of the selected connection gene
+            #NOTE: the innovation counter is incremented to ensure connection genes can be matched up in the crossover
+            #      operator in future generations
+            first_connection_gene = connection(connection_gene.in_node_id,
+                                               random.uniform(0, 1),
+                                               mutated_genome.curr_node_id,
+                                               self.curr_innovation_num)
+            self.curr_innovation_num += 1
+
+            second_connection_gene = connection(mutated_genome.curr_node_id,
+                                               random.uniform(0, 1),
+                                               connection_gene.out_node_id,
+                                               self.curr_innovation_num)
+            self.curr_innovation_num += 1
+            mutated_genome.connection_genes.add(first_connection_gene)
+            mutated_genome.connection_genes.add(second_connection_gene)
+
+            #Disabling the selected connection gene
+            connection_gene.enabled = False
+
+            #Increment the node id to accompany for new nodes in future generations
+            mutated_genome.curr_node_id += 1
+            
+        if (chance_threshold < self.add_connection_rate):
+
+            #Getting all input_ids, output_ids, and the ids as a whole
+            input_ids = [curr_node.id for curr_node in mutated_genome.node_genes if curr_node.type == Type.Input]
+            output_ids = [curr_node.id for curr_node in mutated_genome.node_genes if curr_node.type == Type.Output]
+            all_ids = [curr_node.id for curr_node in mutated_genome.node_genes]            
+            
+            #Selecting an input/output id pair, 
+            # while ensuring the selected input/output id is not within the output/input id pool
+            selected_in_id = random.choice(all_ids)
+            while (selected_in_id in output_ids):
+                selected_in_id = random.choice(all_ids)
+            
+            selected_output_id = random.choice(all_ids)
+            while (selected_output_id in input_ids):
+                selected_output_id = random.choice(all_ids)
+            
+            #Add the connection gene to the genome, then increment the innovation number counter
+            new_connection_gene = connection_gene(
+                selected_in_id,
+                random.uniform(0, 1),
+                selected_output_id,
+                self.curr_innovation_num
+            )
+
+            mutated_genome.connection_genes.add(new_connection_gene)
+            self.curr_innovation_num += 1
+
+        if (chance_threshold < self.adjust_weight_rate):
+            #Get a random connection gene
+            connection_gene = random.choice(mutated_genome.connection_genes)
+            connection_gene.weight = random.uniform(0, 1)
+
+        return mutated_genome
+        
