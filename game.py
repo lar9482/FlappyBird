@@ -55,7 +55,13 @@ class game:
     
     def __hit_bottom(self, bird):
         return bird.hitbox.y >= self.screen_size[1]
-
+    
+    def __died(self, bird):
+        return (self.__has_collided(bird, self.pipes[0]) or self.__hit_bottom(bird))
+    
+    def __can_jump(self, bird):
+        return bird.hitbox.y >=0
+    
     def __init(self):
         pygame.init()
 
@@ -71,7 +77,7 @@ class game:
                     sys.exit()
             
                 #Event for handling when the spacebar is pressed
-                if event.type == 771:
+                if event.type == 771 and self.__can_jump(self.bird):
                     self.bird.jump()
             
             #Remove the first pipe once it removes off screen
@@ -83,7 +89,7 @@ class game:
                 self.pipes.append(pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width))
 
             #Check if the bird has died
-            if (self.__has_collided(self.bird, self.pipes[0]) or self.__hit_bottom(self.bird)):
+            if (self.__died(self.bird)):
                 print('die')
 
             # fills screen with a background color

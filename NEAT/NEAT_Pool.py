@@ -160,7 +160,7 @@ class NEAT_Pool:
 
         return new_genome
 
-    #Utilizing a 'merge' operation to the disjoint and matching genes, as the connection genes are sorted based
+    #Utilizing a 'merge' operation to find the disjoint and matching genes, as the connection genes are sorted based
     # on the innovation number
     def __find_disjoint_match_genes(self, genome1, genome2):
         disjoint_genes_1 = []
@@ -169,6 +169,10 @@ class NEAT_Pool:
 
         i = j = 0
         
+        #Basically, 
+        #if inno_num1 < inno_num2, a disjoint gene from genome1 is found,
+        #if inno_num2 < inno_num1, a disjoint gene from genome2 was found
+        #if inno_num1 == inno_num2, a matching gene was found
         while ((i < len(genome1.connection_genes)) and (j < len(genome2.connection_genes))) :
             if (genome1.connection_genes[i].innovation_number < genome2.connection_genes[j].innovation_number):
                 disjoint_genes_1.append(genome1.connection_genes[i])
@@ -183,6 +187,7 @@ class NEAT_Pool:
                 i += 1
                 j += 1
 
+        #Append the remaining disjoint genes
         while (i < len(genome1.connection_genes)):
             disjoint_genes_1.append(genome1.connection_genes[i])
             i += 1
