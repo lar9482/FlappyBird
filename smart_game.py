@@ -4,7 +4,10 @@ import sys
 from entities.bird import bird
 from entities.pipes import pipes
 
-class game:
+from smart_entities.smart_bird import smart_bird
+from smart_entities.smart_bird_pool import smart_bird_pool
+
+class smart_game:
     def __init__(self, screen_size, fps):
         self.screen_size = screen_size
 
@@ -69,6 +72,9 @@ class game:
         # create a game clock
         clock = pygame.time.Clock()
 
+        test_smart_bird = smart_bird(3, 1)
+        test_smart_bird.init_bird_entity(self.screen_size)
+
         while True:
 
             # handle mouse and keyboard events
@@ -109,9 +115,14 @@ class game:
                 pipe.draw(self.screen)
                 pipe.update_position()
 
+            ##############
+            test_smart_bird.make_observation(self.pipes[0])
+            test_smart_bird.bird_entity.draw(self.screen)
+            ##############
+
             # update display based on what's drawn on the screen
             pygame.display.flip()
-        
+
             # loop through at the fps rate
             clock.tick(self.fps)
 
@@ -120,10 +131,9 @@ class game:
         self.__main_loop()
 
 def main():
-
     screen_size = (500, 700)
     fps = 60
-    Game = game(screen_size, fps)
+    Game = smart_game(screen_size, fps)
     Game.run_game()
 
 if __name__ == "__main__":

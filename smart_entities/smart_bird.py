@@ -24,4 +24,4 @@ class smart_bird(genome):
         self.end_time = timer()
 
     def make_observation(self, pipe):
-        pass
+        print()

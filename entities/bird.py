@@ -1,5 +1,5 @@
 import pygame as pg
-
+import random
 
 class bird:
     def __init__(self, screen_size):
@@ -20,7 +20,7 @@ class bird:
 
         #Position of the bird
         self.x = 0.25 * screen_size[0]
-        self.y = 0.25 * screen_size[1]
+        self.y = random.uniform(0.1*screen_size[1], 0.9*screen_size[1])
 
         #Hitbox of the bird, just the image's rectangle
         self.hitbox = self.image.get_rect()

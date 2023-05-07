@@ -8,7 +8,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/tests/test_smart_bird_pool.py",
+            "program": "${workspaceFolder}/smart_game.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "env": {"PYTHONPATH": "${workspaceFolder}"}
