@@ -12,7 +12,8 @@ class smart_game:
         self.screen_size = screen_size
 
         self.bird = bird(screen_size)
-        self.pipes = [pipes(screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
+        self.forward_pipes = [pipes(screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
+        self.backward_pipes = []
         self.screen = pygame.display.set_mode(screen_size)
 
         self.BLACK = (0, 0, 0)
@@ -60,7 +61,8 @@ class smart_game:
         return bird.hitbox.y >= self.screen_size[1]
     
     def __died(self, bird):
-        return (self.__has_collided(bird, self.pipes[0]) or self.__hit_bottom(bird))
+        return (self.__has_collided(bird, self.forward_pipes[0]) 
+                or self.__hit_bottom(bird))
     
     def __can_jump(self, bird):
         return bird.hitbox.y >=0
@@ -90,17 +92,19 @@ class smart_game:
                     sys.exit()
 
             #Remove the first pipe once it removes off screen
-            if (self.pipes[0].x <= -self.pipes[0].width_constant*self.pipes[0].bird_width):
-                self.pipes.pop(0)
+            if (len(self.backward_pipes) > 0):
+                if (self.backward_pipes[0].x <= -self.backward_pipes[0].width_constant*self.backward_pipes[0].bird_width):
+                    self.backward_pipes.pop(0)
             
             #Adding a pipe to the screen
-            if (self.pipes[0].x == self.bird.x):
-                self.pipes.append(pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width))
+            if (self.forward_pipes[0].top_pipe.right == self.bird.hitbox.left):
+                self.forward_pipes.append(pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width))
+                self.backward_pipes.append(self.forward_pipes.pop(0))
 
             birds_updated = 0
             for bird in birds_entities:
                 if (bird.end_time == -1):
-                    observation = bird.make_observation(self.pipes[0])             
+                    observation = bird.make_observation(self.forward_pipes[0])             
                     jump_or_not = bird.predict(observation)
 
                     if (jump_or_not > 0.5 and self.__can_jump(bird.bird_entity)):
@@ -115,7 +119,13 @@ class smart_game:
                     birds_updated += 1
             
             #For all pipes in the game currently
-            for pipe in self.pipes:
+            for pipe in self.forward_pipes:
+                
+                #Draw and update positions of the pipes
+                pipe.draw(self.screen)
+                pipe.update_position()
+            
+            for pipe in self.backward_pipes:
                 
                 #Draw and update positions of the pipes
                 pipe.draw(self.screen)
@@ -142,8 +152,9 @@ class smart_game:
                     bird.init_bird_entity(self.screen_size)
                     bird.start()
 
-                #Reset the pipe
-                self.pipes = [pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
+                #Reset the pipes
+                self.forward_pipes = [pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
+                self.backward_pipes = []
 
     def run_game(self):
         self.__init()
