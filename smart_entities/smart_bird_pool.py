@@ -31,4 +31,4 @@ class smart_bird_pool(NEAT_Pool):
             bird.init_bird_entity(screen_size)
 
     def fitness_function(self, bird):
-        return (bird.end_time - bird.start_time) + (50/bird.distance)
+        return (bird.end_time - bird.start_time) + (100/bird.distance)
