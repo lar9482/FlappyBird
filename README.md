@@ -8,3 +8,6 @@ However, I've been interested in trying to implement NEAT(NeuroEvolution of Augm
 So, I wrote this simple environment to test my custom library.
 
 If you want to run this project, simply run smart_game.py
+
+DEMO:
+https://www.youtube.com/watch?v=JWrG1m-bQcg
