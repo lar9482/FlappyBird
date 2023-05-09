@@ -145,10 +145,12 @@ class NEAT_Pool:
         for connection_gene in new_genome.connection_genes:
             if (not connection_gene.in_node_id in curr_node_ids):
                 new_genome.node_genes.add(node(Type.Hidden, connection_gene.in_node_id))
+                new_genome.curr_node_id += 1
                 curr_node_ids.append(connection_gene.in_node_id)
 
             if (not connection_gene.out_node_id in curr_node_ids):
                 new_genome.node_genes.add(node(Type.Hidden, connection_gene.out_node_id))
+                new_genome.curr_node_id += 1
                 curr_node_ids.append(connection_gene.out_node_id)
 
             #25% of the time, re-enable a connection gene

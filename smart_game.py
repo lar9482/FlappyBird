@@ -72,59 +72,75 @@ class smart_game:
         # create a game clock
         clock = pygame.time.Clock()
 
-        test_smart_bird = smart_bird(3, 1)
-        test_smart_bird.init_bird_entity(self.screen_size)
+        bird_pool = smart_bird_pool(self.screen_size)
+        birds_entities = bird_pool.population
+
+        for bird in birds_entities:
+            bird.init_bird_entity(self.screen_size)
+            bird.start()
 
         while True:
+
+            # fills screen with a background color
+            self.screen.fill(self.WHITE)
 
             # handle mouse and keyboard events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-            
-                #Event for handling when the spacebar is pressed
-                if event.type == 771 and self.__can_jump(self.bird):
-                    self.bird.jump()
-            
+
             #Remove the first pipe once it removes off screen
             if (self.pipes[0].x <= -self.pipes[0].width_constant*self.pipes[0].bird_width):
                 self.pipes.pop(0)
-                print()
             
             #Adding a pipe to the screen
             if (self.pipes[0].x == self.bird.x):
                 self.pipes.append(pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width))
 
-            #Check if the bird has died
-            if (self.__died(self.bird)):
-                print('die')
+            birds_updated = 0
+            for bird in birds_entities:
+                if (bird.end_time == -1):
+                    observation = bird.make_observation(self.pipes[0])             
+                    jump_or_not = bird.predict(observation)
 
-            # fills screen with a background color
-            self.screen.fill(self.WHITE)
+                    if (jump_or_not > 0.5 and self.__can_jump(bird.bird_entity)):
+                        bird.bird_entity.jump()
 
-            #Drawing the bird
-            self.bird.draw(self.screen)
-        
-            #Updating the position of the bird
-            self.bird.update_position()
+                    if (self.__died(bird.bird_entity)):
+                        bird.end()
 
+                    bird.bird_entity.draw(self.screen)
+                    bird.bird_entity.update_position()
+
+                    birds_updated += 1
+            
             #For all pipes in the game currently
             for pipe in self.pipes:
-
+                
                 #Draw and update positions of the pipes
                 pipe.draw(self.screen)
+                
                 pipe.update_position()
-
-            ##############
-            test_smart_bird.make_observation(self.pipes[0])
-            test_smart_bird.bird_entity.draw(self.screen)
-            ##############
-
+                
+            
             # update display based on what's drawn on the screen
             pygame.display.flip()
 
             # loop through at the fps rate
             clock.tick(self.fps)
+
+            if (birds_updated == 0):
+
+                bird_pool.reproduce()
+                
+                birds_entities = bird_pool.population
+
+                for bird in birds_entities:
+                    bird.reset()
+                    bird.init_bird_entity(self.screen_size)
+                    bird.start()
+
+                self.pipes = [pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
 
     def run_game(self):
         self.__init()

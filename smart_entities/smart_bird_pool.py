@@ -4,13 +4,13 @@ from smart_entities.smart_bird import smart_bird
 class smart_bird_pool(NEAT_Pool):
     def __init__(
             self, screen_size, 
-            num_inputs = 3, 
+            num_inputs = 7, 
             num_outputs = 1,
-            population_size = 50,
-            add_node_rate = 0.2,
-            add_connection_rate = 0.5,
-            adjust_weight_rate = 0.2,
-            num_elites = 2
+            population_size = 30,
+            add_node_rate = 0.4,
+            add_connection_rate = 0.4,
+            adjust_weight_rate = 0.8,
+            num_elites = 5
         ):
         
         genome_type = smart_bird 
@@ -31,4 +31,4 @@ class smart_bird_pool(NEAT_Pool):
             bird.init_bird_entity(screen_size)
 
     def fitness_function(self, bird):
-        return bird.end_time - bird.start_time
+        return (bird.end_time - bird.start_time)

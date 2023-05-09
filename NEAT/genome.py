@@ -40,7 +40,7 @@ class genome:
         chosen_output_id = random.choice(list(range(self.num_inputs, self.num_inputs+self.num_outputs)))
 
         new_connection_gene = connection(chosen_input_id,
-                                         random.uniform(0, 1),
+                                         random.uniform(-1, 1),
                                          chosen_output_id,
                                          NEAT_Pool.curr_innovation_num)
         
@@ -87,7 +87,10 @@ class genome:
                     )
 
                     #Given the out_node_id isn't an output id, add it to the queue
-                    if (not conn.out_node_id in output_ids):
+                    if (not conn.out_node_id in output_ids 
+                        and conn.out_node_id != curr_id
+                        and conn.out_node_id in curr_ids
+                        ):
                         curr_ids.append(conn.out_node_id)
 
     def __get_output(self):
