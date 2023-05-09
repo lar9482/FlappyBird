@@ -119,7 +119,6 @@ class smart_game:
                 
                 #Draw and update positions of the pipes
                 pipe.draw(self.screen)
-                
                 pipe.update_position()
                 
             
@@ -129,17 +128,21 @@ class smart_game:
             # loop through at the fps rate
             clock.tick(self.fps)
 
+            #Once all of the birds have died(aka, when no birds got updated)
             if (birds_updated == 0):
-
+                
+                #Reproduce the birds through the GA
                 bird_pool.reproduce()
                 
                 birds_entities = bird_pool.population
 
+                #Reset the birds
                 for bird in birds_entities:
                     bird.reset()
                     bird.init_bird_entity(self.screen_size)
                     bird.start()
 
+                #Reset the pipe
                 self.pipes = [pipes(self.screen_size, self.bird.hitbox.height, self.bird.hitbox.width)]
 
     def run_game(self):
