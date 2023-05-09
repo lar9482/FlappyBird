@@ -40,7 +40,7 @@ class genome:
         chosen_output_id = random.choice(list(range(self.num_inputs, self.num_inputs+self.num_outputs)))
 
         new_connection_gene = connection(chosen_input_id,
-                                         random.uniform(-1, 1),
+                                         random.uniform(0, 1),
                                          chosen_output_id,
                                          NEAT_Pool.curr_innovation_num)
         

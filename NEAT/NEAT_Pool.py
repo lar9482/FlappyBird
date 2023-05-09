@@ -106,7 +106,7 @@ class NEAT_Pool:
 
     def get_elite_genomes(self, fitness_genome_pairing):
         genomes = list(fitness_genome_pairing.values())
-        return [genomes[i] for i in reversed(range(self.population_size-self.num_elites, self.population_size))]
+        return [genomes[i] for i in reversed(range(len(genomes)-self.num_elites, len(genomes)))]
             
     def select(self, fitness_genome_pairing):
         fitness_values = list(fitness_genome_pairing.keys())

@@ -10,7 +10,7 @@ class pipes:
         self.width_constant = 1.5
 
         #How far apart the pipes are relative to the height of the bird
-        self.height_constant = 2.5
+        self.height_constant = 3.75
 
 
         #The horizational position of the pipes
